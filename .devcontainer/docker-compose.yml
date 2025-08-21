@@ -1,5 +1,5 @@
 services:
-  python-devcontainer:
+  onvif-ptz-stream-api:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile

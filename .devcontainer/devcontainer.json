@@ -1,7 +1,7 @@
 {
-    "name": "python-devcontainer",
+    "name": "onvif-ptz-stream-api",
     "dockerComposeFile": "docker-compose.yml",
-    "service": "python-devcontainer",
+    "service": "onvif-ptz-stream-api",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "remoteUser": "vscode",
     "shutdownAction": "stopCompose",

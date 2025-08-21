@@ -74,7 +74,7 @@ This template provides a complete, containerized Python development environment 
 
 ### One-Click Setup with Codespaces
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/yourusername/python-devcontainer?quickstart=1)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/yourusername/onvif-ptz-stream-api?quickstart=1)
 
 ## 📋 Prerequisites
 
@@ -96,8 +96,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/python-devcontainer.git
-cd python-devcontainer
+git clone https://github.com/yourusername/onvif-ptz-stream-api.git
+cd onvif-ptz-stream-api
 ```
 
 ### 2. Open in VS Code
@@ -133,7 +133,7 @@ The first time will take a few minutes to:
 python main.py
 
 # Expected output:
-# Hello from python-devcontainer!
+# Hello from onvif-ptz-stream-api!
 ```
 
 ### Package Management with UV
@@ -180,7 +180,7 @@ bandit -r .
 ## 📁 Project Structure
 
 ```
-python-devcontainer/
+onvif-ptz-stream-api/
 ├── .devcontainer/
 │   ├── devcontainer.json      # VS Code DevContainer configuration
 │   ├── Dockerfile             # Python development environment
@@ -319,7 +319,7 @@ Add a PostgreSQL database to your `docker-compose.yml`:
 
 ```yaml
 services:
-  python-devcontainer:
+  onvif-ptz-stream-api:
     # ... existing configuration ...
     depends_on:
       - postgres
@@ -426,14 +426,14 @@ uv cache clean
 docker ps
 
 # View logs for specific service
-docker logs python-devcontainer-<service-name>-1
+docker logs onvif-ptz-stream-api-<service-name>-1
 
 # Restart specific service
-docker restart python-devcontainer-<service-name>-1
+docker restart onvif-ptz-stream-api-<service-name>-1
 
 # Check network connectivity
 docker network ls
-docker network inspect python-devcontainer_backend
+docker network inspect onvif-ptz-stream-api_backend
 ```
 
 #### Permission Issues (Linux/macOS)
@@ -528,7 +528,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**[⬆ Back to Top](#-python-devcontainer-template)**
+**[⬆ Back to Top](#-onvif-ptz-stream-api-template)**
 
 Made with ❤️ for the Python community
 
