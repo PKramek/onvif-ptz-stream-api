@@ -1,7 +1,7 @@
 [project]
 name = "onvif-ptz-stream-api"
 version = "0.1.0"
-description = "Th"
+description = "This FastAPI application provides a low-latency video streaming interface and PTZ control API for ONVIF cameras"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
