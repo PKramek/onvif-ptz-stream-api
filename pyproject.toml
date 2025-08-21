@@ -1,0 +1,18 @@
+[project]
+name = "python-devcontainer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "bandit>=1.8.6",
+    "conventional-pre-commit>=4.2.0",
+    "detect-secrets>=1.5.0",
+    "mypy>=1.17.0",
+    "pre-commit>=4.2.0",
+    "pyupgrade>=3.20.0",
+    "ruff>=0.12.4",
+]

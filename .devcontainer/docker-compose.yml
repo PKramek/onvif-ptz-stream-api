@@ -1,0 +1,17 @@
+services:
+  python-devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+
+    command: ["sleep", "infinity"]
+
+    volumes:
+      - ../..:/workspaces:cached
+
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

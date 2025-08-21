@@ -1,0 +1,27 @@
+{
+    "name": "python-devcontainer",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "python-devcontainer",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "remoteUser": "vscode",
+    "shutdownAction": "stopCompose",
+    "postCreateCommand": ".devcontainer/setup.sh",
+    "mounts": [
+        "type=bind,source=${localEnv:HOME}/.ssh,target=/root/.ssh,readonly"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "charliermarsh.ruff",
+                "ms-python.mypy-type-checker",
+                "njqdev.vscode-python-typehint",
+                "KevinRose.vsc-python-indent",
+                "VisualStudioExptTeam.vscodeintellicode",
+                "eamodio.gitlens",
+                "GitHub.copilot",
+                "Gruntfuggly.todo-tree"
+            ]
+        }
+    }
+}
