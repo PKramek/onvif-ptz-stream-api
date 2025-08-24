@@ -1,13 +1,26 @@
 from functools import lru_cache
 from typing import Annotated
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.enums import Environment
 from app.core.types import SemanticVersionType
 
 DEFAULT_APP_NAME = "onvif-ptz-stream-api"
+
+
+class OnvifSettings(BaseSettings):
+    ONVIF_CAMERA_IP_ADDRESS: str = Field(
+        ..., description="The IP address of the ONVIF camera"
+    )
+    ONVIF_CAMERA_PORT: int = Field(
+        default=80, description="The port of the ONVIF camera"
+    )
+    ONVIF_CAMERA_USER: str = Field(..., description="The username for the ONVIF camera")
+    ONVIF_CAMERA_PASSWORD: SecretStr = Field(
+        ..., description="The password for the ONVIF camera"
+    )
 
 
 class Settings(BaseSettings):
@@ -39,6 +52,7 @@ class Settings(BaseSettings):
     ]
 
     # External services - The settings for external services should be grouped together in a separate class
+    onvif: OnvifSettings = Field(default_factory=lambda: OnvifSettings())  # type: ignore[call-arg]
 
     model_config = SettingsConfigDict(frozen=True)
 

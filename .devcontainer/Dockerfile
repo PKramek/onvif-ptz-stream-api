@@ -4,15 +4,11 @@ FROM python:3.12-slim-bookworm
 ARG DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSION=3.12
 
-RUN apt-get update \
-    && apt-get install -y build-essential git \
-    curl \
-    bash \
-    iputils-ping \
-    tree \
-    telnet \
-    fish \
-    vim
+RUN apt-get update && apt-get install -y \
+    build-essential git curl bash \
+    libgl1 libglib2.0-0 libsm6 libxext6 libxrender1 \
+    iputils-ping tree telnet fish vim \
+    ffmpeg libgtk-3-0 ca-certificates python3-dev net-tools
 
 # Add vscode user
 ARG USERNAME=vscode

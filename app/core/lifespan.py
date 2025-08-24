@@ -5,6 +5,7 @@ from fastapi import FastAPI
 import structlog
 
 from app.core.config import Settings
+from app.services.onvif_service import OnvifService
 from app.services.shared_services import SharedServices
 from app.services.health_check import HealthCheckService
 
@@ -17,7 +18,10 @@ def lifespan_factory(settings: Settings):
         app.state.logger = structlog.get_logger()
 
         services = SharedServices(
-            health_check_service=HealthCheckService(logger=app.state.logger)
+            health_check_service=HealthCheckService(logger=app.state.logger),
+            onvif_service=OnvifService(
+                settings=settings.onvif, logger=app.state.logger
+            ),
         )
         app.state.shared_services = services
 
