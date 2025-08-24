@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
 from app.contracts.services.health_check import IHealthCheckService
+from app.contracts.services.onvif_service import IOnvifService
 
 
 class SharedServices(BaseModel):
@@ -13,6 +14,7 @@ class SharedServices(BaseModel):
     """
 
     health_check_service: IHealthCheckService
+    onvif_service: IOnvifService
 
     model_config = ConfigDict(arbitrary_types_allowed=True, frozen=True)
 

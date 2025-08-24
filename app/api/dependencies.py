@@ -5,6 +5,7 @@ import structlog
 from fastapi import Depends, Request
 
 from app.contracts.services.health_check import IHealthCheckService
+from app.contracts.services.onvif_service import IOnvifService
 from app.core.config import Settings
 from app.core.types import LoggerType
 from app.services.shared_services import SharedServices
@@ -30,6 +31,10 @@ def get_health_check_service(request: Request) -> IHealthCheckService:
     return request.app.state.shared_services.health_check_service
 
 
+def get_onvif_service(request: Request) -> IOnvifService:
+    return request.app.state.shared_services.onvif_service
+
+
 # ───────────────────────────────SETTINGS───────────────────────────────
 SettingsDep = Annotated[Settings, Depends(get_settings_dependency)]
 # ───────────────────────────────SERVICES───────────────────────────────
@@ -37,6 +42,7 @@ SharedServicesDep = Annotated[SharedServices, Depends(get_shared_services)]
 HealthCheckServiceDep = Annotated[
     IHealthCheckService, Depends(get_health_check_service)
 ]
+OnvifServiceDep = Annotated[IOnvifService, Depends(get_onvif_service)]
 # ───────────────────────────────OTHER───────────────────────────────
 UptimeDep = Annotated[float, Depends(get_uptime)]
 LoggerDep = Annotated[LoggerType, Depends(get_logger)]

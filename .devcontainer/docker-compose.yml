@@ -9,6 +9,12 @@ services:
     volumes:
       - ../..:/workspaces:cached
 
+    environment:
+      - ONVIF_CAMERA_IP_ADDRESS=${ONVIF_CAMERA_IP_ADDRESS}
+      - ONVIF_CAMERA_USER=${ONVIF_CAMERA_USER}
+      - ONVIF_CAMERA_PASSWORD=${ONVIF_CAMERA_PASSWORD}
+      - ONVIF_CAMERA_WSDL_PATH=${ONVIF_CAMERA_WSDL_PATH}
+
     networks:
       - backend
 
