@@ -20,7 +20,9 @@ def lifespan_factory(settings: Settings):
         services = SharedServices(
             health_check_service=HealthCheckService(logger=app.state.logger),
             onvif_service=OnvifService(
-                settings=settings.onvif, logger=app.state.logger
+                onvif_settings=settings.onvif,
+                ptz_settings=settings.ptz,
+                logger=app.state.logger,
             ),
         )
         app.state.shared_services = services

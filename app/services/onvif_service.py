@@ -1,189 +1,105 @@
+from functools import cached_property
+
+from onvif import ONVIFCamera
 from app.contracts.services.onvif_service import IOnvifService
-from urllib.parse import urlparse, urlunparse
+from time import sleep
 
 from app.core.types import PanVelocityType, TiltVelocityType, ZoomVelocityType
 
 
 class OnvifService(IOnvifService):
-    """
-    Service for interacting with the ONVIF camera.
-    """
+    @cached_property
+    def camera(self) -> ONVIFCamera:
+        return ONVIFCamera(
+            self.onvif_settings.onvif_camera_ip_address,
+            self.onvif_settings.onvif_camera_port,
+            self.onvif_settings.onvif_camera_user,
+            self.onvif_settings.onvif_camera_password.get_secret_value(),
+        )
 
-    def get_profile_tokens(self) -> list[str]:
-        return self.onvif_client.get_profile_tokens()
+    @cached_property
+    def ptz(self):
+        return self.camera.create_ptz_service()
 
-    def get_main_profile_token(self) -> str:
-        profile_tokens = self.get_profile_tokens()
-        return profile_tokens[0]
+    @cached_property
+    def media(self):
+        return self.camera.create_media_service()
+
+    @cached_property
+    def media_profile(self):
+        return self.media.GetProfiles()[0]
 
     def get_snapshot_uri(self) -> str:
-        return self.onvif_client.get_snapshot_uri(self.get_main_profile_token())
+        uri = self.media.GetSnapshotUri({"ProfileToken": self.media_profile.token})
+        self.logger.debug(f"Snapshot URI: {uri.Uri}")
+        return uri.Uri
 
     def get_stream_uri(self) -> str:
-        uri = self.onvif_client.get_streaming_uri(self.get_main_profile_token())
-        parsed = urlparse(uri)
-
-        # Add username and password to the netloc part: username:password@host:port
-        netloc_with_auth = f"{self.settings.ONVIF_CAMERA_USER}:{self.settings.ONVIF_CAMERA_PASSWORD.get_secret_value()}@{parsed.hostname}"
-        if parsed.port:
-            netloc_with_auth += f":{parsed.port}"
-
-        # Build new URL with credentials included
-        authorized_uri = urlunparse(
-            (
-                parsed.scheme,
-                netloc_with_auth,
-                parsed.path,
-                parsed.params,
-                parsed.query,
-                parsed.fragment,
-            )
+        stream = self.media.GetStreamUri(
+            {
+                "StreamSetup": {
+                    "Stream": "RTP-Unicast",
+                    "Transport": {"Protocol": "RTSP"},
+                },
+                "ProfileToken": self.media_profile.token,
+            }
         )
-        return authorized_uri
+        self.logger.debug(f"Stream URI: {stream.Uri}")
+        return stream.Uri
 
-    def _is_ptz_supported(self) -> bool:
-        """
-        Check if the camera supports PTZ operations by validating the PTZ service.
-        """
-        try:
-            # Check if PTZ service exists and is properly initialized
-            if not hasattr(self.onvif_client, "ptz") or self.onvif_client.ptz is None:
-                return False
-
-            # Try to get PTZ configurations to verify service is working
-            self.onvif_client.ptz.GetConfigurations()
-            return True
-        except (AttributeError, Exception):
-            return False
-
-    def get_ptz_capabilities(self) -> dict:
-        """
-        Get PTZ capabilities of the camera.
-        Returns a dictionary with PTZ support information.
-        """
-        capabilities: dict = {
-            "ptz_supported": False,
-            "pan_supported": False,
-            "tilt_supported": False,
-            "zoom_supported": False,
-            "home_position_supported": False,
-            "error": None,
+    def _continuous_move(
+        self, pan: float = 0.0, tilt: float = 0.0, zoom: float = 0.0, timeout: float = 1
+    ):
+        request = self.ptz.create_type("ContinuousMove")
+        request.ProfileToken = self.media_profile.token
+        request.Velocity = {
+            "PanTilt": {
+                "x": pan,
+                "y": tilt,
+                "space": "http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace",
+            },
+            "Zoom": {
+                "x": zoom,
+                "space": "http://www.onvif.org/ver10/tptz/ZoomSpaces/VelocityGenericSpace",
+            },
         }
-
-        try:
-            if not self._is_ptz_supported():
-                capabilities["error"] = "PTZ service not available"
-                return capabilities
-
-            capabilities["ptz_supported"] = True
-
-            # Try to get PTZ configurations to determine specific capabilities
-            try:
-                configs = self.onvif_client.ptz.GetConfigurations()
-                if configs:
-                    # Basic PTZ support confirmed
-                    capabilities["pan_supported"] = True
-                    capabilities["tilt_supported"] = True
-                    capabilities["zoom_supported"] = True
-                    capabilities["home_position_supported"] = True
-            except Exception as e:
-                capabilities["error"] = f"Failed to get PTZ configurations: {str(e)}"
-
-        except Exception as e:
-            capabilities["error"] = f"Error checking PTZ capabilities: {str(e)}"
-
-        return capabilities
+        self.logger.debug(
+            f"ContinuousMove request: pan={pan}, tilt={tilt}, zoom={zoom}"
+        )
+        self.ptz.ContinuousMove(request)
+        sleep(timeout)
+        self.ptz.Stop({"ProfileToken": request.ProfileToken})
+        self.logger.debug("Stopped continuous move")
 
     def move_pan(self, pan_velocity: PanVelocityType):
-        if not self._is_ptz_supported():
-            self.logger.warning(
-                "Camera does not support PTZ operations or PTZ configuration is missing"
-            )
-            return
-
-        try:
-            self.onvif_client.move_pan(
-                profile_token=self.get_main_profile_token(), velocity=pan_velocity
-            )
-        except AttributeError as e:
-            if "'NoneType' object has no attribute" in str(e):
-                self.logger.warning(
-                    "Camera does not support PTZ operations or PTZ configuration is missing"
-                )
-                return
-            raise
+        self._continuous_move(pan=pan_velocity)
 
     def move_tilt(self, tilt_velocity: TiltVelocityType):
-        if not self._is_ptz_supported():
-            self.logger.warning(
-                "Camera does not support PTZ operations or PTZ configuration is missing"
-            )
-            return
-
-        try:
-            self.onvif_client.move_tilt(
-                profile_token=self.get_main_profile_token(), velocity=tilt_velocity
-            )
-        except AttributeError as e:
-            if "'NoneType' object has no attribute" in str(e):
-                self.logger.warning(
-                    "Camera does not support PTZ operations or PTZ configuration is missing"
-                )
-                return
-            raise
+        self._continuous_move(tilt=tilt_velocity)
 
     def move_zoom(self, zoom_velocity: ZoomVelocityType):
-        if not self._is_ptz_supported():
-            self.logger.warning(
-                "Camera does not support PTZ operations or PTZ configuration is missing"
-            )
-            return
+        self._continuous_move(zoom=zoom_velocity)
 
-        try:
-            self.onvif_client.move_zoom(
-                profile_token=self.get_main_profile_token(),
-                velocity=zoom_velocity,
-            )
-        except AttributeError as e:
-            if "'NoneType' object has no attribute" in str(e):
-                self.logger.warning(
-                    "Camera does not support PTZ operations or PTZ configuration is missing"
-                )
-                return
-            raise
+    def move_left(self):
+        self.move_pan(pan_velocity=-self.ptz_settings.pan_velocity)
 
-    def stop_ptz(self):
-        if not self._is_ptz_supported():
-            self.logger.warning(
-                "Camera does not support PTZ operations or PTZ configuration is missing"
-            )
-            return
+    def move_right(self):
+        self.move_pan(pan_velocity=self.ptz_settings.pan_velocity)
 
-        try:
-            self.onvif_client.stop_ptz(profile_token=self.get_main_profile_token())
-        except AttributeError as e:
-            if "'NoneType' object has no attribute" in str(e):
-                self.logger.warning(
-                    "Camera does not support PTZ operations or PTZ configuration is missing"
-                )
-                return
-            raise
+    def move_up(self):
+        self.move_tilt(tilt_velocity=self.ptz_settings.tilt_velocity)
+
+    def move_down(self):
+        self.move_tilt(tilt_velocity=-self.ptz_settings.tilt_velocity)
+
+    def zoom_in(self):
+        self.move_zoom(zoom_velocity=self.ptz_settings.zoom_velocity)
+
+    def zoom_out(self):
+        self.move_zoom(zoom_velocity=-self.ptz_settings.zoom_velocity)
 
     def goto_home_position(self):
-        if not self._is_ptz_supported():
-            self.logger.warning(
-                "Camera does not support PTZ operations or PTZ configuration is missing"
-            )
-            return
-
-        try:
-            self.onvif_client.goto_home_position(
-                profile_token=self.get_main_profile_token()
-            )
-        except AttributeError as e:
-            if "'NoneType' object has no attribute" in str(e):
-                self.logger.warning(
-                    "Camera does not support PTZ operations or PTZ configuration is missing"
-                )
-                return
-            raise
+        self.logger.debug("Going to home position")
+        request = self.ptz.create_type("GotoHomePosition")
+        request.ProfileToken = self.media_profile.token
+        self.ptz.GotoHomePosition(request)

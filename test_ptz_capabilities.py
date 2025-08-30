@@ -5,10 +5,10 @@ from app.core.config import OnvifSettings
 onvif_settings = OnvifSettings()
 
 camera = ONVIFCamera(
-    onvif_settings.ONVIF_CAMERA_IP_ADDRESS,
-    onvif_settings.ONVIF_CAMERA_PORT,
-    onvif_settings.ONVIF_CAMERA_USER,
-    onvif_settings.ONVIF_CAMERA_PASSWORD.get_secret_value(),
+    onvif_settings.onvif_camera_ip_address,
+    onvif_settings.onvif_camera_port,
+    onvif_settings.onvif_camera_user,
+    onvif_settings.onvif_camera_password.get_secret_value(),
 )
 ptz = camera.create_ptz_service()
 media = camera.create_media_service()

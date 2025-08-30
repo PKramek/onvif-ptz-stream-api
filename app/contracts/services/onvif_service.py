@@ -1,16 +1,13 @@
 from abc import ABC, abstractmethod
 from pydantic import BaseModel, ConfigDict
 
-from app.core.config import OnvifSettings
+from app.core.config import OnvifSettings, PTZSettings
 from app.core.types import (
     LoggerType,
     PanVelocityType,
     TiltVelocityType,
     ZoomVelocityType,
 )
-from onvif import OnvifClient
-from pydantic import computed_field
-from functools import cached_property
 
 
 class IOnvifService(ABC, BaseModel):
@@ -20,25 +17,11 @@ class IOnvifService(ABC, BaseModel):
     This service is responsible for interacting with the ONVIF camera.
     """
 
-    settings: OnvifSettings
+    onvif_settings: OnvifSettings
+    ptz_settings: PTZSettings
     logger: LoggerType
 
     model_config = ConfigDict(arbitrary_types_allowed=True, frozen=True)
-
-    @computed_field  # type: ignore[misc]
-    @cached_property
-    def onvif_client(self) -> OnvifClient:
-        onvif_client = OnvifClient(
-            self.settings.ONVIF_CAMERA_IP_ADDRESS,
-            self.settings.ONVIF_CAMERA_PORT,
-            self.settings.ONVIF_CAMERA_USER,
-            self.settings.ONVIF_CAMERA_PASSWORD.get_secret_value(),
-        )
-        return onvif_client
-
-    @abstractmethod
-    def get_profile_tokens(self) -> list[str]:
-        pass
 
     @abstractmethod
     def get_snapshot_uri(self) -> str:
@@ -46,10 +29,6 @@ class IOnvifService(ABC, BaseModel):
 
     @abstractmethod
     def get_stream_uri(self) -> str:
-        pass
-
-    @abstractmethod
-    def get_ptz_capabilities(self) -> dict:
         pass
 
     @abstractmethod
@@ -65,7 +44,27 @@ class IOnvifService(ABC, BaseModel):
         pass
 
     @abstractmethod
-    def stop_ptz(self):
+    def move_left(self):
+        pass
+
+    @abstractmethod
+    def move_right(self):
+        pass
+
+    @abstractmethod
+    def move_up(self):
+        pass
+
+    @abstractmethod
+    def move_down(self):
+        pass
+
+    @abstractmethod
+    def zoom_in(self):
+        pass
+
+    @abstractmethod
+    def zoom_out(self):
         pass
 
     @abstractmethod

@@ -11,15 +11,56 @@ DEFAULT_APP_NAME = "onvif-ptz-stream-api"
 
 
 class OnvifSettings(BaseSettings):
-    ONVIF_CAMERA_IP_ADDRESS: str = Field(
-        ..., description="The IP address of the ONVIF camera"
+    onvif_camera_ip_address: str = Field(
+        ...,
+        description="The IP address of the ONVIF camera",
+        alias="ONVIF_CAMERA_IP_ADDRESS",
     )
-    ONVIF_CAMERA_PORT: int = Field(
-        default=80, description="The port of the ONVIF camera"
+
+    onvif_camera_port: int = Field(
+        default=80,
+        description="The port of the ONVIF camera",
+        alias="ONVIF_CAMERA_PORT",
     )
-    ONVIF_CAMERA_USER: str = Field(..., description="The username for the ONVIF camera")
-    ONVIF_CAMERA_PASSWORD: SecretStr = Field(
-        ..., description="The password for the ONVIF camera"
+    onvif_camera_user: str = Field(
+        ..., description="The username for the ONVIF camera", alias="ONVIF_CAMERA_USER"
+    )
+    onvif_camera_password: SecretStr = Field(
+        ...,
+        description="The password for the ONVIF camera",
+        alias="ONVIF_CAMERA_PASSWORD",
+    )
+
+    model_config = SettingsConfigDict(
+        frozen=True, arbitrary_types_allowed=True, env_prefix="ONVIF_CAMERA_"
+    )
+
+
+PTZVelocity = Annotated[
+    float,
+    Field(
+        default=0.5,
+        ge=0.0,
+        le=1.0,
+    ),
+]
+
+
+class PTZSettings(BaseSettings):
+    pan_velocity: PTZVelocity = Field(
+        description="The velocity of the PTZ pan",
+        alias="PTZ_PAN_VELOCITY",
+    )
+    tilt_velocity: PTZVelocity = Field(
+        description="The velocity of the PTZ tilt",
+    )
+    zoom_velocity: PTZVelocity = Field(
+        description="The velocity of the PTZ zoom",
+        alias="PTZ_ZOOM_VELOCITY",
+    )
+
+    model_config = SettingsConfigDict(
+        frozen=True, arbitrary_types_allowed=True, env_prefix="PTZ_"
     )
 
 
@@ -53,6 +94,7 @@ class Settings(BaseSettings):
 
     # External services - The settings for external services should be grouped together in a separate class
     onvif: OnvifSettings = Field(default_factory=lambda: OnvifSettings())  # type: ignore[call-arg]
+    ptz: PTZSettings = Field(default_factory=lambda: PTZSettings())  # type: ignore[call-arg]
 
     model_config = SettingsConfigDict(frozen=True)
 
