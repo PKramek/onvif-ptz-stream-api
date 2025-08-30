@@ -212,15 +212,6 @@ wheels = [
 ]
 
 [[package]]
-name = "ifaddr"
-version = "0.2.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e8/ac/fb4c578f4a3256561548cd825646680edcadb9440f3f68add95ade1eb791/ifaddr-0.2.0.tar.gz", hash = "sha256:cc0cbfcaabf765d44595825fb96a99bb12c79716b73b44330ea38ee2b0c4aed4", size = 10485, upload-time = "2022-06-15T21:40:27.561Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9c/1f/19ebc343cc71a7ffa78f17018535adc5cbdd87afb31d7c34874680148b32/ifaddr-0.2.0-py3-none-any.whl", hash = "sha256:085e0305cfe6f16ab12d72e2024030f5d52674afad6911bb1eee207177b8a748", size = 12314, upload-time = "2022-06-15T21:40:25.756Z" },
-]
-
-[[package]]
 name = "isodate"
 version = "0.7.2"
 source = { registry = "https://pypi.org/simple" }
@@ -401,25 +392,12 @@ wheels = [
 ]
 
 [[package]]
-name = "onvif-client"
-version = "0.0.4"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "onvif2-zeep" },
-    { name = "wsdiscovery" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/a9/a4/5a08ecc3d82e7eade2d1cb2ac24bef07ffa92fe2a087745b118281396994/onvif-client-0.0.4.tar.gz", hash = "sha256:4af3e478b166e8f789d5b7463111dcb4ad67c0cd6f186b4ff8853f5ff572ca8f", size = 197707, upload-time = "2023-04-06T00:41:36.042Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e2/48/231688f01fddb266489e3f00bc83fcbf0ae038cba0ada179ce67cee1dd1a/onvif_client-0.0.4-py3-none-any.whl", hash = "sha256:98d0b62db64fde8a2f17a4f9c5fa533618440d3d48d7dbaf14c944725b844662", size = 217923, upload-time = "2023-04-06T00:41:33.469Z" },
-]
-
-[[package]]
 name = "onvif-ptz-stream-api"
-version = "0.1.1"
+version = "0.1.2"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "onvif-client" },
+    { name = "onvif-zeep" },
     { name = "opencv-python" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
@@ -442,7 +420,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.116.1" },
-    { name = "onvif-client", specifier = ">=0.0.4" },
+    { name = "onvif-zeep", specifier = ">=0.2.12" },
     { name = "opencv-python", specifier = ">=4.12.0.88" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
@@ -463,16 +441,13 @@ dev = [
 ]
 
 [[package]]
-name = "onvif2-zeep"
-version = "0.3.4"
+name = "onvif-zeep"
+version = "0.2.12"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "zeep" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/77/98/aece7bab71daf3d1b929e81eaa88880c5af59c9ef506d90987285d8b7926/onvif2_zeep-0.3.4.tar.gz", hash = "sha256:f82e44031e912de4647990fdc78cbe02db674c8e141bcfd4f2541190cbc76b5d", size = 318588, upload-time = "2023-03-05T13:11:17.208Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/24/d63e25452c869384dc55d60eb30268e647be9d8f74b9b99dd385bc4cfc4b/onvif2_zeep-0.3.4-py3-none-any.whl", hash = "sha256:f386f683e6756dbf1e8307a0207bef30153c784f3028cb80749cee83b18aaeea", size = 349254, upload-time = "2023-03-05T13:11:11.841Z" },
-]
+sdist = { url = "https://files.pythonhosted.org/packages/d7/3c/fe79b4f59337b5cf5d40ea747764b4ff38bab322b2de66706a4d8d7b01e8/onvif_zeep-0.2.12.tar.gz", hash = "sha256:aa8bbc02a73eaa50894b0c18e39fa8d318a583a664c65bf35b3c8029d1c40b49", size = 163061, upload-time = "2018-08-20T18:12:24.209Z" }
 
 [[package]]
 name = "opencv-python"
@@ -868,16 +843,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/1c/14/37fcdba2808a6c615
 wheels = [
     { url = "https://files.pythonhosted.org/packages/76/06/04c8e804f813cf972e3262f3f8584c232de64f0cde9f703b46cf53a45090/virtualenv-20.34.0-py3-none-any.whl", hash = "sha256:341f5afa7eee943e4984a9207c025feedd768baff6753cd660c857ceb3e36026", size = 5983279, upload-time = "2025-08-13T14:24:05.111Z" },
 ]
-
-[[package]]
-name = "wsdiscovery"
-version = "2.1.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "click" },
-    { name = "ifaddr" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6c/81/c3e596d7c043a8b557feccb7f675d9bc4dbbcf2efcf08f4d30872a3fe429/WSDiscovery-2.1.2.tar.gz", hash = "sha256:ab816deff2db101be59830317e19b78a95e9146b2b0a747953345ae68d1d8b58", size = 23201, upload-time = "2025-01-24T08:45:12.395Z" }
 
 [[package]]
 name = "zeep"

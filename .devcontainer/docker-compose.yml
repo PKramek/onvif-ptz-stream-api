@@ -4,16 +4,20 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
 
-    command: ["sleep", "infinity"]
+    command: [ "sleep", "infinity" ]
 
     volumes:
       - ../..:/workspaces:cached
+      - ./wsdl:/etc/onvif/wsdl:ro
 
     environment:
       - ONVIF_CAMERA_IP_ADDRESS=${ONVIF_CAMERA_IP_ADDRESS}
       - ONVIF_CAMERA_USER=${ONVIF_CAMERA_USER}
       - ONVIF_CAMERA_PASSWORD=${ONVIF_CAMERA_PASSWORD}
       - ONVIF_CAMERA_WSDL_PATH=${ONVIF_CAMERA_WSDL_PATH}
+      - PTZ_PAN_VELOCITY=1.0
+      - PTZ_TILT_VELOCITY=1.0
+      - PTZ_ZOOM_VELOCITY=1.0
 
     networks:
       - backend

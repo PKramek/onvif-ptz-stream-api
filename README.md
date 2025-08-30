@@ -1,516 +1,840 @@
-# 🐍 Python DevContainer Template
+# 🎥 ONVIF PTZ Stream API
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![UV](https://img.shields.io/badge/uv-package%20manager-green.svg)](https://docs.astral.sh/uv/)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![DevContainer](https://img.shields.io/badge/DevContainer-Ready-blue.svg)](https://code.visualstudio.com/docs/devcontainers/containers)
-[![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.116.1+-green.svg)](https://fastapi.tiangolo.com/)
+[![ONVIF](https://img.shields.io/badge/ONVIF-Client-0.0.4+-blue.svg)](https://github.com/quatanium/python-onvif-zeep)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.12.0+-orange.svg)](https://opencv.org/)
 
-> 🚀 **A modern, production-ready Python development environment using VS Code DevContainers with UV package management and comprehensive code quality tools.**
+> 🚀 **A high-performance FastAPI application providing low-latency video streaming and PTZ (Pan-Tilt-Zoom) control for ONVIF cameras.**
 
-This template provides a complete, containerized Python development environment that works consistently across different machines and operating systems. Perfect for teams who want to standardize their development setup and onboard new developers quickly.
+This API enables developers to integrate ONVIF camera functionality into their applications, offering real-time video streaming and precise camera control through a RESTful interface. Built with modern Python tooling and containerized development environment.
 
 ## ✨ Features
 
-### 🏗️ **Modern Python Development**
-- **Python 3.12** - Latest stable Python version
-- **UV Package Manager** - Lightning-fast Python package installer and resolver
-- **PEP 621 Compliant** - Modern `pyproject.toml` configuration
-- **Development Dependencies** - Pre-configured with essential dev tools
+### 🎥 **ONVIF Camera Integration**
+- **Real-time Video Streaming** - Low-latency MJPEG streaming from ONVIF cameras
+- **PTZ Control** - Pan, Tilt, and Zoom operations with velocity control
+- **Camera Discovery** - Automatic camera profile detection and configuration
+- **Authentication Support** - Secure camera access with username/password
 
-### 🐳 **Containerized Development Environment**
-- **VS Code DevContainer** - Complete development environment in a container
-- **Docker Compose Setup** - Multi-service architecture ready for databases, OTEL collectors, and other services
-- **Cross-platform Support** - Works on Intel, AMD, and Apple Silicon
-- **Instant Setup** - Zero configuration required for new team members
+### 🏗️ **Modern Architecture**
+- **FastAPI Framework** - High-performance async web framework
+- **Dependency Injection** - Clean service architecture with interfaces
+- **Type Safety** - Comprehensive type hints and Pydantic validation
+- **Structured Logging** - Structured logging with structlog
 
-### 🔧 **Code Quality & Developer Experience**
-- **Ruff** - Ultra-fast Python linter and formatter (replaces Black + isort + flake8)
-- **MyPy** - Static type checking for better code reliability
-- **Pre-commit Hooks** - Automated code quality checks before commits
-- **Security Scanning** - Bandit for security vulnerability detection
-- **Secret Detection** - Prevent accidental commits of sensitive data
-
-### 🛠️ **VS Code Integration**
-- **Rich Extensions** - Python, Ruff, MyPy, GitLens, GitHub Copilot, and more
-- **IntelliSense** - Advanced code completion and navigation
-- **Debugging Support** - Full debugging capabilities pre-configured
-- **Integrated Terminal** - All tools available in the integrated terminal
-
-### 🚀 **Multi-Service Architecture**
-- **Docker Compose Ready** - Easily add databases, message queues, OTEL collectors, and other services
-- **Service Networking** - Pre-configured backend network for service communication
-- **Environment Configuration** - Flexible environment variable management
-- **Development Scaling** - Support for complex local development scenarios
+### 🔧 **Developer Experience**
+- **DevContainer Ready** - Complete development environment in VS Code
+- **UV Package Management** - Fast Python dependency management
+- **Code Quality Tools** - Ruff, MyPy, and pre-commit hooks
+- **Hot Reload** - Development server with automatic reloading
 
 ## 📋 Table of Contents
 
 - [Quick Start](#-quick-start)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Project Structure](#-project-structure)
-- [Development Tools](#-development-tools)
-- [Code Quality](#-code-quality)
+- [Architecture Overview](#-architecture-overview)
+- [API Endpoints](#-api-endpoints)
 - [Configuration](#-configuration)
-- [Adding Services](#-adding-services)
+- [Development Setup](#-development-setup)
+- [Implementation Details](#-implementation-details)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
-- [License](#-license)
 
 ## 🚀 Quick Start
 
-### Using GitHub Template
+### Prerequisites
 
-1. **Click "Use this template"** button at the top of this repository
-2. **Clone your new repository**:
+- **ONVIF Camera** - Any ONVIF-compliant IP camera
+- **Network Access** - Camera must be accessible from your network
+- **Camera Credentials** - Username and password for camera access
+
+### Environment Setup
+
+1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/yourusername/onvif-ptz-stream-api.git
+   cd onvif-ptz-stream-api
    ```
-3. **Open in VS Code** and select "Reopen in Container" when prompted
-4. **Start coding!** 🎉
 
-### One-Click Setup with Codespaces
+2. **Configure environment variables**:
+   ```bash
+   cp .devcontainer/.env.example .devcontainer/.env
+   ```
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/yourusername/onvif-ptz-stream-api?quickstart=1)
+3. **Edit `.env` file with your camera details**:
+   ```bash
+   ONVIF_CAMERA_IP_ADDRESS=192.168.1.100
+   ONVIF_CAMERA_PORT=80
+   ONVIF_CAMERA_USER=admin
+   ONVIF_CAMERA_PASSWORD=your_password_here
+   ```
 
-## 📋 Prerequisites
+4. **Open in VS Code DevContainer**:
+   ```bash
+   code .
+   # Select "Reopen in Container" when prompted
+   ```
 
-Before you begin, ensure you have the following installed:
+5. **Run the application**:
+   ```bash
+   uv run main.py
+   ```
 
-### Required
-- **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (Latest version)
-- **[VS Code](https://code.visualstudio.com/)** (Latest version)
-- **[Dev Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)** for VS Code
+The API will be available at `http://localhost:8000`
 
-### System Requirements
-- **Operating System**: Windows 10/11, macOS, or Linux
-- **Memory**: 8GB RAM minimum (16GB recommended)
-- **Storage**: 10GB free space minimum
-- **Architecture**: x86_64 or ARM64 (Apple Silicon supported)
+## 🏗️ Architecture Overview
 
-## 🛠️ Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/onvif-ptz-stream-api.git
-cd onvif-ptz-stream-api
-```
-
-### 2. Open in VS Code
-
-```bash
-code .
-```
-
-### 3. Reopen in Container
-
-When VS Code opens, you'll see a notification:
-
-> **"Folder contains a Dev Container configuration file. Reopen folder to develop in a container"**
-
-Click **"Reopen in Container"** or:
-- Press `F1` → Type "Dev Containers: Reopen in Container"
-- Use Command Palette: `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (macOS)
-
-### 4. Wait for Container Build
-
-The first time will take a few minutes to:
-- Download the base Docker images
-- Install Python dependencies
-- Configure VS Code extensions
-- Set up the development environment
-
-## 📖 Usage
-
-### Running the Sample Application
-
-```bash
-# Test the sample application
-python main.py
-
-# Expected output:
-# Hello from onvif-ptz-stream-api!
-```
-
-### Package Management with UV
-
-```bash
-# Install a new package
-uv add requests
-
-# Install development dependency
-uv add --dev pytest
-
-# Install from lock file
-uv sync
-
-# Update dependencies
-uv lock --upgrade
-
-# Show installed packages
-uv pip list
-```
-
-### Code Quality Tools
-
-```bash
-# Run linting
-ruff check .
-
-# Auto-fix issues
-ruff check --fix .
-
-# Format code
-ruff format .
-
-# Type checking
-mypy main.py
-
-# Run all pre-commit hooks
-pre-commit run --all-files
-
-# Security scan
-bandit -r .
-```
-
-## 📁 Project Structure
+### Project Structure
 
 ```
 onvif-ptz-stream-api/
-├── .devcontainer/
-│   ├── devcontainer.json      # VS Code DevContainer configuration
-│   ├── Dockerfile             # Python development environment
-│   ├── docker-compose.yml     # Multi-service setup
-│   ├── setup.sh              # Post-creation setup script
-│   └── .env.example          # Environment variables template
-├── .pre-commit-config.yaml    # Pre-commit hooks configuration
-├── pyproject.toml             # Python project configuration
-├── uv.lock                   # Dependency lock file
-├── main.py                   # Sample Python application
-└── README.md                 # This file
+├── app/
+│   ├── api/                    # API layer
+│   │   ├── v1/                # API version 1
+│   │   │   ├── endpoints/     # Route handlers
+│   │   │   │   ├── ptz.py     # PTZ control endpoints
+│   │   │   │   └── stream.py  # Video streaming endpoints
+│   │   │   └── router.py      # API router configuration
+│   │   ├── dependencies.py    # FastAPI dependencies
+│   │   └── healthcheck.py     # Health check endpoint
+│   ├── core/                  # Core application logic
+│   │   ├── app_factory.py     # FastAPI application factory
+│   │   ├── config.py          # Configuration management
+│   │   ├── enums.py           # Application enums
+│   │   ├── logging_config.py  # Logging configuration
+│   │   └── types.py           # Custom type definitions
+│   ├── contracts/             # Service interfaces
+│   │   └── services/          # Service contracts
+│   │       └── onvif_service.py
+│   ├── services/              # Service implementations
+│   │   ├── onvif_service.py   # ONVIF camera service
+│   │   ├── health_check.py    # Health check service
+│   │   └── shared_services.py # Shared service utilities
+│   ├── schemas/               # Pydantic models
+│   └── utils/                 # Utility functions
+├── .devcontainer/             # Development container setup
+├── pyproject.toml             # Project configuration
+└── main.py                    # Application entry point
 ```
 
-## 🔧 Development Tools
+### Design Patterns
 
-### Included Tools
+#### 1. **Dependency Injection Pattern**
+The application uses FastAPI's dependency injection system to manage service instances:
 
-| Tool | Purpose | Configuration |
-|------|---------|---------------|
-| **UV** | Package management | `pyproject.toml` |
-| **Ruff** | Linting & formatting | `pyproject.toml` |
-| **MyPy** | Type checking | `pyproject.toml` |
-| **Bandit** | Security scanning | `pyproject.toml` |
-| **PyUpgrade | automatically upgrade syntax | `pyproject.toml` |
-| **Pre-commit** | Git hooks | `.pre-commit-config.yaml` |
+```python
+# app/api/dependencies.py
+OnvifServiceDep = Annotated[IOnvifService, Depends(get_onvif_service)]
 
-### VS Code Extensions
-
-Pre-installed extensions for the best development experience:
-
-- **Python** - Python language support
-- **Ruff** - Python linting and formatting
-- **MyPy Type Checker** - Static type checking
-- **Python Typehint** - Enhanced type hint support
-- **Python Indent** - Correct Python indentation
-- **IntelliCode** - AI-assisted development
-- **GitLens** - Enhanced Git capabilities
-- **GitHub Copilot** - AI pair programming
-- **TODO Tree** - Task management
-
-## ✅ Code Quality
-
-### Automated Quality Checks
-
-This template enforces code quality through multiple layers:
-
-#### Pre-commit Hooks
-- **File checks**: Large files, merge conflicts, YAML/TOML syntax
-- **Security**: Private key detection, secret scanning
-- **Python**: AST validation, debug statement detection
-- **Formatting**: Trailing whitespace, end-of-file fixes
-- **Code Quality**: Ruff linting and formatting
-
-#### Static Analysis
-- **Ruff**: Comprehensive linting (replaces flake8, isort, and more)
-- **MyPy**: Static type checking for better code reliability
-- **Bandit**: Security vulnerability scanning
-
-#### Configuration
-
-All tools are configured in `pyproject.toml`:
-
-```toml
-[tool.ruff]
-line-length = 88
-target-version = "py312"
-
-[tool.mypy]
-python_version = "3.12"
-strict = true
-
-[tool.bandit]
-exclude_dirs = ["tests"]
+# Usage in endpoints
+@router.post("/cameras/{camera_id}/ptz")
+async def set_ptz_position(
+    camera_id: str,
+    command: PTZCommand,
+    onvif_service: OnvifServiceDep
+):
+    # Service is automatically injected
+    onvif_service.move_pan(command.pan_velocity)
 ```
+
+#### 2. **Interface Segregation**
+Services are defined through abstract base classes for better testability:
+
+```python
+# app/contracts/services/onvif_service.py
+class IOnvifService(ABC, BaseModel):
+    @abstractmethod
+    def move_pan(self, pan_velocity: PanVelocityType):
+        pass
+
+    @abstractmethod
+    def get_stream_uri(self) -> str:
+        pass
+```
+
+#### 3. **Factory Pattern**
+Application creation is handled through a factory function:
+
+```python
+# app/core/app_factory.py
+def create_app(settings: Settings) -> FastAPI:
+    app = FastAPI(
+        title=settings.app_name,
+        version=settings.version,
+        # ... configuration
+    )
+    # ... setup
+    return app
+```
+
+## 📡 API Endpoints
+
+### PTZ Control Endpoints
+
+#### Get Camera List
+```http
+GET /api/v1/cameras
+```
+Returns a list of available cameras (currently returns empty array).
+
+#### Get Camera Status
+```http
+GET /api/v1/cameras/{camera_id}
+```
+Returns camera status information.
+
+#### Control PTZ Movement
+```http
+POST /api/v1/cameras/{camera_id}/ptz
+Content-Type: application/json
+
+{
+  "pan_velocity": 0.5,
+  "tilt_velocity": -0.3,
+  "zoom_velocity": 0.0
+}
+```
+
+**Velocity Ranges:**
+- **Pan**: -1.0 (left) to +1.0 (right)
+- **Tilt**: -1.0 (down) to +1.0 (up)  
+- **Zoom**: -1.0 (zoom out) to +1.0 (zoom in)
+
+#### Get PTZ Position
+```http
+GET /api/v1/cameras/{camera_id}/ptz/position
+```
+Returns current PTZ position (currently returns empty object).
+
+#### Return to Home Position
+```http
+POST /api/v1/cameras/{camera_id}/ptz/home
+```
+Moves camera to its home/rest position.
+
+### Video Streaming Endpoints
+
+#### Live Video Stream
+```http
+GET /api/v1/stream/{camera_id}
+```
+Returns a live MJPEG stream from the specified camera.
+
+**Stream Format:**
+- **Content-Type**: `multipart/x-mixed-replace; boundary=frame`
+- **Frame Format**: JPEG-encoded frames
+- **Streaming**: Continuous frame delivery for real-time viewing
 
 ## ⚙️ Configuration
 
 ### Environment Variables
 
-The template includes an `.env.example` file for environment variable configuration. Copy and customize it for your needs:
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `ONVIF_CAMERA_IP_ADDRESS` | Camera IP address | ✅ | - |
+| `ONVIF_CAMERA_PORT` | Camera port | ❌ | 80 |
+| `ONVIF_CAMERA_USER` | Camera username | ✅ | - |
+| `ONVIF_CAMERA_PASSWORD` | Camera password | ✅ | - |
+| `DEBUG` | Enable debug mode | ❌ | false |
+| `LOG_LEVEL` | Logging level | ❌ | INFO |
+| `ENVIRONMENT` | Environment type | ❌ | development |
 
-```bash
-cp .devcontainer/.env.example .devcontainer/.env
-```
+### Configuration Management
 
-Add your environment variables to the `.env` file:
-
-```bash
-# Example environment variables
-API_KEY=your_api_key_here
-DATABASE_URL=postgresql://user:pass@host:port/dbname
-DEBUG=true
-```
-
-### Customizing the Environment
-
-#### Adding Dependencies
-
-```bash
-# Production dependency
-uv add package-name
-
-# Development dependency  
-uv add --dev package-name
-
-# Optional dependency group
-uv add --group group-name package-name
-```
-
-#### VS Code Settings
-
-Customize VS Code settings in `.devcontainer/devcontainer.json`:
-
-```json
-{
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python"
-      },
-      "extensions": [
-        "ms-python.python"
-      ]
-    }
-  }
-}
-```
-
-## 🐳 Adding Services
-
-This template uses Docker Compose, making it easy to add additional services for local development. The setup includes a pre-configured backend network for service communication.
-
-### Example: Adding a Database
-
-Add a PostgreSQL database to your `docker-compose.yml`:
-
-```yaml
-services:
-  onvif-ptz-stream-api:
-    # ... existing configuration ...
-    depends_on:
-      - postgres
-
-  postgres:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: myapp
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend
-
-volumes:
-  postgres_data:
-```
-
-### Example: Adding Redis Cache
-
-```yaml
-services:
-  # ... existing services ...
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    networks:
-      - backend
-```
-
-### Example: Adding OTEL Collector
-
-```yaml
-services:
-  # ... existing services ...
-
-  otel-collector:
-    image: otel/opentelemetry-collector:latest
-    command: ["--config=/etc/otel-collector-config.yml"]
-    volumes:
-      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
-    ports:
-      - "8888:8888"   # Prometheus metrics
-      - "8889:8889"   # Prometheus exporter metrics
-      - "13133:13133" # health_check extension
-      - "4317:4317"   # OTLP gRPC receiver
-      - "4318:4318"   # OTLP HTTP receiver
-    networks:
-      - backend
-```
-
-### Service Communication
-
-Services can communicate using their service names as hostnames:
+The application uses Pydantic Settings for type-safe configuration:
 
 ```python
-# Connect to PostgreSQL from Python container
-import psycopg2
+# app/core/config.py
+class OnvifSettings(BaseSettings):
+    ONVIF_CAMERA_IP_ADDRESS: str = Field(
+        ..., description="The IP address of the ONVIF camera"
+    )
+    ONVIF_CAMERA_PORT: int = Field(
+        default=80, description="The port of the ONVIF camera"
+    )
+    # ... other settings
 
-conn = psycopg2.connect(
-    host="postgres",  # Service name as hostname
-    port=5432,
-    database="myapp",
-    user="postgres",
-    password="postgres"
+class Settings(BaseSettings):
+    onvif: OnvifSettings = Field(default_factory=lambda: OnvifSettings())
+
+    model_config = SettingsConfigDict(frozen=True)
+```
+
+## 🛠️ Development Setup
+
+### Using DevContainer (Recommended)
+
+1. **Install VS Code and Docker Desktop**
+2. **Install Dev Containers extension**
+3. **Clone and open project**
+4. **Select "Reopen in Container"**
+
+### Manual Setup
+
+1. **Install Python 3.12+**
+2. **Install UV package manager**:
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+3. **Install dependencies**:
+   ```bash
+   uv sync
+   ```
+
+4. **Set environment variables**:
+   ```bash
+   export ONVIF_CAMERA_IP_ADDRESS=192.168.1.100
+   export ONVIF_CAMERA_USER=admin
+   export ONVIF_CAMERA_PASSWORD=your_password
+   ```
+
+5. **Run the application**:
+   ```bash
+   uv run main.py
+   ```
+
+### Development Tools
+
+```bash
+# Code quality checks
+uv run ruff check .
+uv run ruff format .
+
+# Type checking
+uv run mypy .
+
+# Security scanning
+uv run bandit -r .
+
+# Run pre-commit hooks
+uv run pre-commit run --all-files
+```
+
+## 🔍 Implementation Details
+
+### ONVIF Service Implementation
+
+#### Camera Connection
+The ONVIF client is created using cached properties for efficiency:
+
+```python
+# app/contracts/services/onvif_service.py
+@computed_field
+@cached_property
+def onvif_client(self) -> OnvifClient:
+    return OnvifClient(
+        self.settings.ONVIF_CAMERA_IP_ADDRESS,
+        self.settings.ONVIF_CAMERA_PORT,
+        self.settings.ONVIF_CAMERA_USER,
+        self.settings.ONVIF_CAMERA_PASSWORD.get_secret_value(),
+    )
+```
+
+#### Stream URI Generation
+The service automatically adds authentication credentials to stream URIs:
+
+```python
+# app/services/onvif_service.py
+def get_stream_uri(self) -> str:
+    uri = self.onvif_client.get_streaming_uri(self.get_main_profile_token())
+    parsed = urlparse(uri)
+
+    # Add username and password to the netloc part
+    netloc_with_auth = f"{self.settings.ONVIF_CAMERA_USER}:{self.settings.ONVIF_CAMERA_PASSWORD.get_secret_value()}@{parsed.hostname}"
+
+    # Build new URL with credentials included
+    authorized_uri = urlunparse((
+        parsed.scheme,
+        netloc_with_auth,
+        parsed.path,
+        parsed.params,
+        parsed.query,
+        parsed.fragment,
+    ))
+    return authorized_uri
+```
+
+#### Error Handling
+PTZ operations include graceful error handling for unsupported cameras:
+
+```python
+def move_pan(self, pan_velocity: PanVelocityType):
+    try:
+        self.onvif_client.move_pan(
+            profile_token=self.get_main_profile_token(),
+            velocity=pan_velocity
+        )
+    except AttributeError as e:
+        if "'NoneType' object has no attribute" in str(e):
+            self.logger.warning(
+                "Camera does not support PTZ operations or PTZ configuration is missing"
+            )
+            return
+        raise
+```
+
+### Video Streaming Implementation
+
+#### Frame Generation
+The streaming endpoint uses OpenCV for frame capture and encoding:
+
+```python
+# app/api/v1/endpoints/stream.py
+def generate_frames():
+    cap = cv2.VideoCapture(stream_uri)
+    if not cap.isOpened():
+        logger.error(f"Cannot open video stream for {camera_id}")
+        return
+
+    try:
+        while True:
+            success, frame = cap.read()
+            if not success:
+                break
+
+            ret, jpeg = cv2.imencode(".jpg", frame)
+            if not ret:
+                continue
+
+            frame_bytes = jpeg.tobytes()
+            yield (
+                b"--frame\r\n"
+                b"Content-Type: image/jpeg\r\n\r\n" +
+                frame_bytes + b"\r\n"
+            )
+    finally:
+        cap.release()
+```
+
+#### MJPEG Response
+Returns a proper MJPEG multipart response for browser compatibility:
+
+```python
+return StreamingResponse(
+    generate_frames(),
+    media_type="multipart/x-mixed-replace; boundary=frame",
 )
+```
 
-# Connect to Redis
-import redis
+### Type System
 
-r = redis.Redis(host="redis", port=6379, db=0)
+The application uses custom types for PTZ operations:
+
+```python
+# app/core/types.py
+PanVelocityType = Annotated[float, Field(ge=-1.0, le=1.0)]
+TiltVelocityType = Annotated[float, Field(ge=-1.0, le=1.0)]
+ZoomVelocityType = Annotated[float, Field(ge=-1.0, le=1.0)]
 ```
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-#### Container Won't Start
-```bash
-# Rebuild container
-Ctrl+Shift+P → "Dev Containers: Rebuild Container"
+#### Camera Connection Problems
 
-# Or rebuild without cache
-Ctrl+Shift+P → "Dev Containers: Rebuild Container Without Cache"
+1. **Check network connectivity**:
+   ```bash
+   ping 192.168.1.100
+   telnet 192.168.1.100 80
+   ```
+
+2. **Verify ONVIF support**:
+   - Ensure camera supports ONVIF protocol
+   - Check if ONVIF is enabled in camera settings
+   - Verify correct port (usually 80 or 8080)
+
+3. **Authentication issues**:
+   - Verify username/password are correct
+   - Check if camera requires special characters in credentials
+   - Ensure user has PTZ permissions
+
+#### Streaming Issues
+
+1. **Frame drops or lag**:
+   - Check network bandwidth
+   - Reduce frame quality in camera settings
+   - Verify camera supports MJPEG streaming
+
+2. **No video output**:
+   - Check if stream URI is accessible
+   - Verify camera profile tokens
+   - Check browser compatibility (MJPEG support)
+
+#### PTZ Control Issues
+
+1. **Camera doesn't move**:
+   - Verify PTZ is enabled in camera settings
+   - Check if camera supports requested movement
+   - Ensure user has PTZ control permissions
+
+2. **Erratic movement**:
+   - Check velocity values (should be between -1.0 and 1.0)
+   - Verify camera calibration
+   - Test with smaller velocity values
+
+### Debug Mode
+
+Enable debug mode for detailed logging:
+
+```bash
+export DEBUG=true
+export LOG_LEVEL=DEBUG
 ```
 
-#### Python Package Issues
-```bash
-# Reinstall all packages
-uv sync --refresh
+### Log Analysis
 
-# Clear UV cache
-uv cache clean
+The application uses structured logging. Look for these log patterns:
+
+```bash
+# Check for ONVIF connection issues
+grep "ONVIF" logs/app.log
+
+# Check for streaming errors
+grep "stream" logs/app.log
+
+# Check for PTZ operation failures
+grep "PTZ" logs/app.log
 ```
 
-#### Service Connection Issues
-```bash
-# Check all container status
-docker ps
+## 🔧 **Developer Implementation Guide**
 
-# View logs for specific service
-docker logs onvif-ptz-stream-api-<service-name>-1
+This section provides detailed information for developers who need to understand how the API was implemented, extend functionality, or troubleshoot issues.
 
-# Restart specific service
-docker restart onvif-ptz-stream-api-<service-name>-1
+### **Core Implementation Patterns**
 
-# Check network connectivity
-docker network ls
-docker network inspect onvif-ptz-stream-api_backend
+#### **1. ONVIF Client Management**
+The ONVIF client is implemented using cached properties to avoid recreating connections:
+
+```python
+# app/contracts/services/onvif_service.py
+@computed_field
+@cached_property
+def onvif_client(self) -> OnvifClient:
+    return OnvifClient(
+        self.settings.ONVIF_CAMERA_IP_ADDRESS,
+        self.settings.ONVIF_CAMERA_PORT,
+        self.settings.ONVIF_CAMERA_USER,
+        self.settings.ONVIF_CAMERA_PASSWORD.get_secret_value(),
+    )
 ```
 
-#### Permission Issues (Linux/macOS)
-```bash
-# Fix file permissions
-sudo chown -R $USER:$USER .
+**Why this approach?** ONVIF connections can be expensive to establish, so we cache the client instance. The `@cached_property` ensures the client is only created once per service instance.
+
+#### **2. Stream URI Authentication**
+Stream URIs are automatically modified to include authentication credentials:
+
+```python
+# app/services/onvif_service.py
+def get_stream_uri(self) -> str:
+    uri = self.onvif_client.get_streaming_uri(self.get_main_profile_token())
+    parsed = urlparse(uri)
+
+    # Add username and password to the netloc part
+    netloc_with_auth = f"{self.settings.ONVIF_CAMERA_USER}:{self.settings.ONVIF_CAMERA_PASSWORD.get_secret_value()}@{parsed.hostname}"
+
+    # Build new URL with credentials included
+    authorized_uri = urlunparse((
+        parsed.scheme,
+        netloc_with_auth,
+        parsed.path,
+        parsed.params,
+        parsed.query,
+        parsed.fragment,
+    ))
+    return authorized_uri
 ```
 
-### Performance Tips
+**Implementation note:** This approach embeds credentials directly in the URL, which is necessary for some ONVIF cameras that don't support HTTP authentication headers.
 
-- **Enable Docker BuildKit** for faster builds
-- **Allocate more memory** to Docker (8GB recommended)
-- **Use SSD storage** for better I/O performance
-- **Close unnecessary VS Code windows** to save resources
-- **Use Docker volumes** for data that needs to persist
+#### **3. PTZ Error Handling Strategy**
+PTZ operations include graceful fallbacks for unsupported cameras:
+
+```python
+def move_pan(self, pan_velocity: PanVelocityType):
+    try:
+        self.onvif_client.move_pan(
+            profile_token=self.get_main_profile_token(),
+            velocity=pan_velocity
+        )
+    except AttributeError as e:
+        if "'NoneType' object has no attribute" in str(e):
+            self.logger.warning(
+                "Camera does not support PTZ operations or PTZ configuration is missing"
+            )
+            return
+        raise
+```
+
+**Why this pattern?** Not all ONVIF cameras support PTZ operations. This error handling allows the API to work with cameras that only support streaming.
+
+### **Video Streaming Implementation Details**
+
+#### **Frame Processing Pipeline**
+The streaming endpoint uses OpenCV for efficient frame processing:
+
+```python
+# app/api/v1/endpoints/stream.py
+def generate_frames():
+    cap = cv2.VideoCapture(stream_uri)
+    if not cap.isOpened():
+        logger.error(f"Cannot open video stream for {camera_id}")
+        return
+
+    try:
+        while True:
+            success, frame = cap.read()
+            if not success:
+                break
+
+            ret, jpeg = cv2.imencode(".jpg", frame)
+            if not ret:
+                continue
+
+            frame_bytes = jpeg.tobytes()
+            yield (
+                b"--frame\r\n"
+                b"Content-Type: image/jpeg\r\n\r\n" +
+                frame_bytes + b"\r\n"
+            )
+    finally:
+        cap.release()
+```
+
+**Key implementation decisions:**
+- **JPEG encoding**: Chosen for browser compatibility and reasonable compression
+- **Generator pattern**: Memory-efficient streaming without buffering all frames
+- **Error handling**: Graceful degradation when frames can't be read
+
+#### **MJPEG Response Format**
+The API returns proper MJPEG multipart responses:
+
+```python
+return StreamingResponse(
+    generate_frames(),
+    media_type="multipart/x-mixed-replace; boundary=frame",
+)
+```
+
+**Why MJPEG?** This format is widely supported by browsers and provides low-latency streaming suitable for real-time camera monitoring.
+
+### **Configuration Management Architecture**
+
+#### **Settings Inheritance Pattern**
+Configuration uses Pydantic's nested settings for clean organization:
+
+```python
+# app/core/config.py
+class OnvifSettings(BaseSettings):
+    ONVIF_CAMERA_IP_ADDRESS: str = Field(..., description="The IP address of the ONVIF camera")
+    ONVIF_CAMERA_PORT: int = Field(default=80, description="The port of the ONVIF camera")
+    # ... other settings
+
+class Settings(BaseSettings):
+    onvif: OnvifSettings = Field(default_factory=lambda: OnvifSettings())
+
+    model_config = SettingsConfigDict(frozen=True)
+```
+
+**Benefits of this approach:**
+- **Type safety**: All settings are validated at startup
+- **Environment variable mapping**: Automatic mapping from environment variables
+- **Immutable settings**: Prevents runtime configuration changes
+- **Nested organization**: Groups related settings logically
+
+### **Dependency Injection System**
+
+#### **Service Registration Pattern**
+Services are registered using FastAPI's dependency injection:
+
+```python
+# app/api/dependencies.py
+def get_onvif_service() -> IOnvifService:
+    settings = get_settings()
+    logger = get_logger()
+    return OnvifService(settings=settings.onvif, logger=logger)
+
+OnvifServiceDep = Annotated[IOnvifService, Depends(get_onvif_service)]
+```
+
+**Usage in endpoints:**
+```python
+@router.post("/cameras/{camera_id}/ptz")
+async def set_ptz_position(
+    camera_id: str,
+    command: PTZCommand,
+    onvif_service: OnvifServiceDep
+):
+    # Service is automatically injected and ready to use
+    onvif_service.move_pan(command.pan_velocity)
+```
+
+### **Type System Design**
+
+#### **Custom Type Definitions**
+PTZ operations use constrained numeric types:
+
+```python
+# app/core/types.py
+PanVelocityType = Annotated[float, Field(ge=-1.0, le=1.0)]
+TiltVelocityType = Annotated[float, Field(ge=-1.0, le=1.0)]
+ZoomVelocityType = Annotated[float, Field(ge=-1.0, le=1.0)]
+```
+
+**Why these constraints?** ONVIF cameras expect velocity values in the range [-1.0, 1.0], where:
+- **0.0** = no movement
+- **Positive values** = movement in primary direction
+- **Negative values** = movement in opposite direction
+
+### **Performance Considerations**
+
+#### **Memory Management**
+- **Streaming**: Uses generators to avoid buffering entire video streams in memory
+- **ONVIF Client**: Cached to prevent connection overhead
+- **Frame Processing**: Direct frame-to-JPEG conversion without intermediate storage
+
+#### **Network Optimization**
+- **Connection Reuse**: ONVIF client connections are reused
+- **Streaming**: Direct camera-to-client streaming without proxy buffering
+- **Error Recovery**: Automatic reconnection attempts for failed operations
+
+### **Security Implementation**
+
+#### **Credential Management**
+- **Environment Variables**: Credentials stored in environment variables, not in code
+- **Secret Types**: Pydantic's `SecretStr` for password fields
+- **URL Embedding**: Credentials embedded in stream URLs for camera compatibility
+
+#### **Input Validation**
+- **Pydantic Models**: All API inputs validated through Pydantic schemas
+- **Type Constraints**: Numeric values constrained to valid ranges
+- **Path Parameters**: Camera IDs validated as strings
+
+### **Testing Strategy**
+
+#### **Service Layer Testing**
+Services can be tested independently using mock ONVIF clients:
+
+```python
+# Example test pattern
+def test_onvif_service_move_pan():
+    mock_client = MockOnvifClient()
+    service = OnvifService(settings=mock_settings, logger=mock_logger)
+    service.onvif_client = mock_client
+
+    service.move_pan(0.5)
+    mock_client.move_pan.assert_called_once_with(
+        profile_token="profile_token",
+        velocity=0.5
+    )
+```
+
+#### **API Testing**
+Endpoints can be tested using FastAPI's test client:
+
+```python
+from fastapi.testclient import TestClient
+
+def test_ptz_endpoint():
+    client = TestClient(app)
+    response = client.post(
+        "/api/v1/cameras/test-camera/ptz",
+        json={"pan_velocity": 0.5, "tilt_velocity": 0.0, "zoom_velocity": 0.0}
+    )
+    assert response.status_code == 200
+```
+
+### **Common Development Scenarios**
+
+#### **Adding New PTZ Commands**
+1. **Extend the interface** in `app/contracts/services/onvif_service.py`
+2. **Implement the method** in `app/services/onvif_service.py`
+3. **Add the endpoint** in `app/api/v1/endpoints/ptz.py`
+4. **Update schemas** if new data models are needed
+
+#### **Supporting New Camera Types**
+1. **Check ONVIF compliance** - ensure camera follows ONVIF standards
+2. **Test profile tokens** - verify camera returns valid profile information
+3. **Validate PTZ support** - check if camera supports requested operations
+4. **Handle edge cases** - implement fallbacks for unsupported features
+
+#### **Performance Tuning**
+1. **Monitor frame rates** - adjust JPEG quality for optimal performance
+2. **Network optimization** - ensure sufficient bandwidth for streaming
+3. **Memory usage** - monitor for memory leaks in long-running streams
+4. **Error recovery** - implement exponential backoff for failed operations
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our contributing guidelines:
+### Development Workflow
 
-### Getting Started
+1. **Fork the repository**
+2. **Create a feature branch**:
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
 
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
-3. **Make** your changes
-4. **Run** tests and quality checks: `pre-commit run --all-files`
-5. **Commit** your changes: `git commit -m 'Add amazing feature'`
-6. **Push** to the branch: `git push origin feature/amazing-feature`
-7. **Open** a Pull Request
+3. **Make your changes** following the existing patterns:
+   - Use dependency injection for services
+   - Implement interfaces for new services
+   - Add comprehensive type hints
+   - Include error handling
 
-### Development Guidelines
+4. **Run quality checks**:
+   ```bash
+   uv run pre-commit run --all-files
+   ```
 
-- Follow **PEP 8** style guidelines (enforced by Ruff)
-- Add **type hints** to all functions
-- Write **tests** for new functionality
-- Update **documentation** as needed
-- Ensure all **quality checks pass**
+5. **Test your changes**:
+   ```bash
+   # Test with your ONVIF camera
+   uv run main.py
+   ```
 
-### Code of Conduct
+6. **Submit a pull request**
 
-This project follows the [Contributor Covenant](https://www.contributor-covenant.org/) Code of Conduct.
+### Code Standards
+
+- **Type Hints**: All functions must include type hints
+- **Error Handling**: Graceful error handling for camera operations
+- **Logging**: Structured logging for debugging
+- **Documentation**: Docstrings for all public methods
+- **Testing**: Unit tests for new functionality
+
+### Adding New Features
+
+#### New PTZ Operations
+1. **Add method to interface** (`app/contracts/services/onvif_service.py`)
+2. **Implement in service** (`app/services/onvif_service.py`)
+3. **Add endpoint** (`app/api/v1/endpoints/ptz.py`)
+4. **Update schemas** if needed
+
+#### New Camera Features
+1. **Extend configuration** (`app/core/config.py`)
+2. **Add service methods** following existing patterns
+3. **Create new endpoints** in appropriate router
+4. **Update dependencies** if needed
 
 ## 📚 Resources
 
-### Documentation
-- [VS Code DevContainers](https://code.visualstudio.com/docs/devcontainers/containers)
-- [UV Package Manager](https://docs.astral.sh/uv/)
-- [Ruff Linter](https://docs.astral.sh/ruff/)
-- [Pre-commit Hooks](https://pre-commit.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [Python Type Hints](https://docs.python.org/3/library/typing.html)
+### ONVIF Documentation
+- [ONVIF Core Specification](https://www.onvif.org/profiles/specifications/)
+- [ONVIF Device Service](https://www.onvif.org/profiles/specifications/device/)
+- [ONVIF Media Service](https://www.onvif.org/profiles/specifications/media/)
+- [ONVIF PTZ Service](https://www.onvif.org/profiles/specifications/ptz/)
 
-### Learning Materials
-- [Python Best Practices](https://realpython.com/python-code-quality/)
-- [Docker for Developers](https://docs.docker.com/get-started/)
-- [Docker Compose Tutorial](https://docs.docker.com/compose/gettingstarted/)
+### Python Libraries
+- [python-onvif-zeep](https://github.com/quatanium/python-onvif-zeep) - ONVIF client library
+- [OpenCV Python](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html) - Computer vision library
+- [FastAPI](https://fastapi.tiangolo.com/) - Web framework documentation
 
-## 🌟 Why This Template?
-
-### For Individual Developers
-- ⚡ **Zero setup time** - Start coding immediately
-- 🔧 **Best practices built-in** - Modern tooling pre-configured
-- 🛡️ **Quality assurance** - Automated checks prevent issues
-- 📚 **Learning opportunity** - Discover modern Python tooling
-
-### For Teams
-- 🎯 **Consistent environments** - Same setup for everyone
-- 🚀 **Faster onboarding** - New team members productive in minutes
-- 👥 **Better collaboration** - Shared tooling and standards
-- 🔒 **Security by default** - Built-in security scanning
-
-### For Projects
-- 🏗️ **Production-ready** - Follows industry best practices
-- 📈 **Scalable foundation** - Easy to extend and customize
-- 🧪 **Testing-friendly** - Set up for comprehensive testing
-- 📦 **Deployment-ready** - Container-based development to production
-- 🐳 **Multi-service ready** - Easy integration with databases, caches, and other services
+### Development Tools
+- [UV Package Manager](https://docs.astral.sh/uv/) - Fast Python package management
+- [Ruff](https://docs.astral.sh/ruff/) - Python linter and formatter
+- [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) - VS Code container development
 
 ## 📄 License
 
@@ -518,18 +842,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **UV Team** for the amazing package manager
-- **Astral** for Ruff and the excellent Python tooling
-- **Microsoft** for VS Code and DevContainers
-- **Docker** for containerization technology
-- **Python Community** for the incredible ecosystem
+- **ONVIF Forum** for the camera communication protocol
+- **FastAPI Team** for the excellent web framework
+- **OpenCV Community** for computer vision capabilities
+- **Python Community** for the rich ecosystem of tools
 
 ---
 
 <div align="center">
 
-**[⬆ Back to Top](#-onvif-ptz-stream-api-template)**
+**🎥 Built for ONVIF camera integration with modern Python tooling**
 
-Made with ❤️ for the Python community
+Made with ❤️ for the surveillance and automation community
 
 </div>
