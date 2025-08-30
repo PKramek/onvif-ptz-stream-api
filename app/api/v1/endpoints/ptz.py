@@ -35,42 +35,72 @@ async def set_ptz_position(command: PTZCommand, onvif_service: OnvifServiceDep):
 
 
 @router.post("/left")
-async def move_left(onvif_service: OnvifServiceDep):
-    onvif_service.move_left()
+async def move_left(
+    onvif_service: OnvifServiceDep, velocity: PanVelocityType | None = None
+):
+    onvif_service.move_left(velocity)
     return {"success": True, "message": "Camera moved left"}
 
 
 @router.post("/right")
-async def move_right(onvif_service: OnvifServiceDep):
-    onvif_service.move_right()
+async def move_right(
+    onvif_service: OnvifServiceDep, velocity: PanVelocityType | None = None
+):
+    onvif_service.move_right(velocity)
     return {"success": True, "message": "Camera moved right"}
 
 
 @router.post("/up")
-async def move_up(onvif_service: OnvifServiceDep):
-    onvif_service.move_up()
+async def move_up(
+    onvif_service: OnvifServiceDep, velocity: TiltVelocityType | None = None
+):
+    onvif_service.move_up(velocity)
     return {"success": True, "message": "Camera moved up"}
 
 
 @router.post("/down")
-async def move_down(onvif_service: OnvifServiceDep):
-    onvif_service.move_down()
+async def move_down(
+    onvif_service: OnvifServiceDep, velocity: TiltVelocityType | None = None
+):
+    onvif_service.move_down(velocity)
     return {"success": True, "message": "Camera moved down"}
 
 
 @router.post("/zoom_in")
-async def zoom_in(onvif_service: OnvifServiceDep):
-    onvif_service.zoom_in()
+async def zoom_in(
+    onvif_service: OnvifServiceDep, velocity: ZoomVelocityType | None = None
+):
+    onvif_service.zoom_in(velocity)
     return {"success": True, "message": "Camera zoomed in"}
 
 
 @router.post("/zoom_out")
-async def zoom_out(onvif_service: OnvifServiceDep):
-    onvif_service.zoom_out()
+async def zoom_out(
+    onvif_service: OnvifServiceDep, velocity: ZoomVelocityType | None = None
+):
+    onvif_service.zoom_out(velocity)
     return {"success": True, "message": "Camera zoomed out"}
 
 
-@router.post("/home")
-async def goto_home(onvif_service: OnvifServiceDep):
-    onvif_service.goto_home_position()
-    return {"success": True, "message": "Camera moved to home position"}
+@router.post("/preset")
+async def set_preset(onvif_service: OnvifServiceDep, preset_name: str):
+    onvif_service.set_preset(preset_name)
+    return {"success": True, "message": "Camera preset set"}
+
+
+@router.get("/presets")
+async def list_presets(onvif_service: OnvifServiceDep):
+    presets = onvif_service.list_presets()
+    return {"success": True, "message": "Camera presets listed", "presets": presets}
+
+
+@router.post("/preset/{preset_name}")
+async def goto_preset(onvif_service: OnvifServiceDep, preset_name: str):
+    onvif_service.goto_preset(preset_name)
+    return {"success": True, "message": "Camera moved to preset"}
+
+
+@router.delete("/preset/{preset_name}")
+async def delete_preset(onvif_service: OnvifServiceDep, preset_name: str):
+    onvif_service.delete_preset(preset_name)
+    return {"success": True, "message": "Camera preset deleted"}

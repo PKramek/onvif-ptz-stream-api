@@ -44,29 +44,41 @@ class IOnvifService(ABC, BaseModel):
         pass
 
     @abstractmethod
-    def move_left(self):
+    def move_left(self, velocity: PanVelocityType | None = None):
         pass
 
     @abstractmethod
-    def move_right(self):
+    def move_right(self, velocity: PanVelocityType | None = None):
         pass
 
     @abstractmethod
-    def move_up(self):
+    def move_up(self, velocity: TiltVelocityType | None = None):
         pass
 
     @abstractmethod
-    def move_down(self):
+    def move_down(self, velocity: TiltVelocityType | None = None):
         pass
 
     @abstractmethod
-    def zoom_in(self):
+    def zoom_in(self, velocity: ZoomVelocityType | None = None):
         pass
 
     @abstractmethod
-    def zoom_out(self):
+    def zoom_out(self, velocity: ZoomVelocityType | None = None):
         pass
 
     @abstractmethod
-    def goto_home_position(self):
+    def set_preset(self, preset_name: str) -> None:
+        pass
+
+    @abstractmethod
+    def delete_preset(self, preset_name: str) -> None:
+        pass
+
+    @abstractmethod
+    def list_presets(self) -> list[str]:
+        pass
+
+    @abstractmethod
+    def goto_preset(self, preset_name: str) -> None:
         pass
