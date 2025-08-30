@@ -1,4 +1,5 @@
 from functools import cached_property
+from urllib.parse import urlparse, urlunparse
 
 from onvif import ONVIFCamera
 from app.contracts.services.onvif_service import IOnvifService
@@ -44,8 +45,29 @@ class OnvifService(IOnvifService):
                 "ProfileToken": self.media_profile.token,
             }
         )
-        self.logger.debug(f"Stream URI: {stream.Uri}")
-        return stream.Uri
+
+        uri = stream.Uri
+        parsed = urlparse(uri)
+
+        # Add username and password to the netloc part: username:password@host:port
+        netloc_with_auth = f"{self.onvif_settings.onvif_camera_user}:{self.onvif_settings.onvif_camera_password.get_secret_value()}@{parsed.hostname}"
+        if parsed.port:
+            netloc_with_auth += f":{parsed.port}"
+
+        # Build new URL with credentials included
+        authorized_uri = urlunparse(
+            (
+                parsed.scheme,
+                netloc_with_auth,
+                parsed.path,
+                parsed.params,
+                parsed.query,
+                parsed.fragment,
+            )
+        )
+
+        self.logger.debug(f"Stream URI: {authorized_uri}")
+        return authorized_uri
 
     def _continuous_move(
         self, pan: float = 0.0, tilt: float = 0.0, zoom: float = 0.0, timeout: float = 1
