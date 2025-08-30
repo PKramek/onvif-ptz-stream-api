@@ -4,10 +4,11 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
 
-    command: ["sleep", "infinity"]
+    command: [ "sleep", "infinity" ]
 
     volumes:
       - ../..:/workspaces:cached
+      - ./wsdl:/etc/onvif/wsdl:ro
 
     environment:
       - ONVIF_CAMERA_IP_ADDRESS=${ONVIF_CAMERA_IP_ADDRESS}

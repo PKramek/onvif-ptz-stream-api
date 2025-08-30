@@ -40,3 +40,16 @@ SemanticVersionType = Annotated[
         description="Full semantic version with optional pre-release and build metadata",
     ),
 ]
+
+PanVelocityType: TypeAlias = Annotated[
+    float,
+    Field(ge=-1.0, le=1.0, description="Pan velocity in the range of -1.0 to 1.0"),
+]
+TiltVelocityType: TypeAlias = Annotated[
+    float,
+    Field(ge=-1.0, le=1.0, description="Tilt velocity in the range of -1.0 to 1.0"),
+]
+ZoomVelocityType: TypeAlias = Annotated[
+    float,
+    Field(ge=-1.0, le=1.0, description="Zoom velocity in the range of -1.0 to 1.0"),
+]
